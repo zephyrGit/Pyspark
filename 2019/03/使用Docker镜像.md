@@ -410,5 +410,163 @@ $ COPY ./package.json /app/
 
 因为这些路径已经超出了上下文的范围，Docker引擎无法获得这些位置的文件。如果真的需要那些文件，应该将他们复制到上下文目录中去。
 
+## 其它生成镜像的方法
+
+除了表混的Dockerfile生成的镜像外，由于特殊需求合同历史原因，还有其它方法用以生成镜像
+
+### 从rootfs压缩包导入
+
+格式： docker import [选项] <文件>|<URL>|- [<仓库名>[:<标签>]]
+
+压缩包可以是本地文件、远程 Web 文件，甚至是从标准输入中得到。压缩包将会
+在镜像 / 目录展开，并直接作为镜像第一层提交。
+
+~~~shell
+$ docker import \
+http://download.openvz.org/template/precreated/ubuntu-14.04-
+x86_64-minimal.tar.gz \
+openvz/ubuntu:14.04
+Downloading from http://download.openvz.org/template/precreated/
+ubuntu-14.04-x86_64-minimal.tar.gz
+sha256:f477a6e18e989839d25223f301ef738b69621c4877600ae6467c4e528
+9822a79B/78.42 MB
+~~~
+
+这条命令自动下载了 ubuntu-14.04-x86_64-minimal.tar.gz 文件，并且作为
+根文件系统展开导入，并保存为镜像 openvz/ubuntu:14.04 。
+
+查看导入镜像
+
+~~~shell
+[root@localhost docker]# docker images openvz/ubuntu
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+openvz/ubuntu       14.04               824857189f82        40 seconds ago      215MB
+~~~
+
+查看历史，会看到描述中导入的文件链接
+
+~~~shell
+[root@localhost docker]# docker history openvz/ubuntu:14.04
+IMAGE               CREATED             CREATED BY          SIZE                COMMENT
+824857189f82        4 minutes ago                           215MB               Imported from http://dow
+nload.openvz.org/template/precreated/ubuntu-14.04-x86_64-minimal.tar.gz
+~~~
+
+### docker save 和 docker load
+
+Docker 还提供了 docker load 和 docker save 命令，用以将镜像保存为一
+个 tar 文件，然后传输到另一个位置上，再加载进来。这是在没有 Docker
+Registry 时的做法，现在已经不推荐，镜像迁移应该直接使用 Docker Registry，无
+论是直接使用 Docker Hub 还是使用内网私有 Registry 都可以。
+
+- 保存镜像
+
+使用docker save 命令可以将镜像保存为归档文件
+
+~~~shell
+[root@localhost docker]# docker save alpine | gzip > alpine-latest.tar.gz
+~~~
+
+然后将alpine-latest.tar.gz文件复制到另一个机器上，可以使用一下命令加载镜像：
+
+~~~shell
+docker load -i alpine-latest.tar.gz
+~~~
+
+利用Linux强大的管道，可以写一个命令完成从一个机器将镜像迁移到另一个机器，并且带进度条功能：
+
+~~~shell
+docker save <镜像名> | bzip2 | pv | ssh <用户名>@<主机名> 'cat | do
+cker load'
+~~~
+
+### 删除本地镜像
+
+如果要删除本地镜像：可以使用 docker rmi 命令：
+
+~~~shell
+docker rmi [选项] <镜像1> [<镜像2>...]
+~~~
+
+**注意：docker rm 命令是删除容器**
+
+### 用ID、镜像名、摘要删除镜像
+
+其中 镜像 可以是 镜像短ID， 镜像长ID， 镜像名 或 镜像摘要
+
+镜像的完整ID，也称长ID；使用脚本的时候可能会用长ID，所以更多的时候用 短ID 来删除镜像。docker images 默认列出的就是 短ID， 一般取3个以上字符，够区分即可
+
+例如要删除 alpine 镜像，可以执行：
+
+~~~shell
+docker rmi 5cb
+~~~
+
+也可以使用镜像名，也就是<仓库名>:<标签>，来删除镜像
+
+~~~shell
+docker rmi mysql
+~~~
+
+更精确的是使用镜像摘要删除镜像
+
+~~~shell
+# 查看镜像摘要
+[root@localhost docker]# docker images --digests
+REPOSITORY TAG DIGEST
+IMAGE
+ID CREATED SIZE
+node slim sha256:b4f0e0bde
+b578043c1ea6862f0d40cc4afe32a4a582f3be235a3b164422be228 6e0c4c
+8e3913 3 weeks ago 214 MB
+
+# 删除镜像
+docker rmi node@sha256:b4f0e0bdeb578043c1ea6862f0d40cc4afe32a4
+a582f3be235a3b164422be228
+Untagged: node@sha256:b4f0e0bdeb578043c1ea6862f0d40cc4afe32a4a58
+2f3be235a3b164422be228
+~~~
+
+### Untagged 和 Deleted
+
+删除行为分为两类，一类是Untagged，另一类是Deleted，镜像的唯一标识是ID和摘要
+
+### 用docker images命令来配合
+
+可以使用 docker images -q 来配合使用 docker rmi， 删除虚悬镜像指令：
+
+~~~shell
+$ docker rmi $(docker images -q -f dangling=true)
+~~~
+
+列如要删除所有仓库名为 nginx 的镜像
+
+~~~shell
+docker rmi $(docker images -q nginx)
+~~~
+
+或者删除所有在 mongo:3.2之前的镜像：
+
+~~~shell
+docker rmi $(docker images -q -f before=mongo:3.2)
+~~~
+
+### CentOS/RHEL的用户需要注意的事项
+
+在 Ubuntu/Debian 上有 UnionFS 可以使用，如 aufs 或者 overlay2 ，而CentOS 和 RHEL 的内核中没有相关驱动。因此对于这类系统，一般使用devicemapper 驱动利用 LVM 的一些机制来模拟分层存储。这样的做法除了性能比较差外，稳定性一般也不好，而且配置相对复杂。Docker 安装在 CentOS/RHEL上后，会默认选devicemapper ，但是为了简化配置，其 devicemapper 是跑在一个稀疏文件模拟的块设备上，也被称为 loop-lvm 。这样的选择是因为不需要额外配置就可以运行 Docker，这是自动配置唯一能做到的事情。但是 loop-lvm 的做法非常不好，其稳定性、性能更差，无论是日志还是 docker info 中都会看到警告信息。官方文档有明确的文章讲解了如何配置块设备给devicemapper 驱动做存储层的做法，这类做法也被称为配置 direct-lvm 。
+
+除了前面说到的问题外， devicemapper + loop-lvm 还有一个缺陷，因为它是稀疏文件，所以它会不断增长。
+
+用户在使用过程中会注意到/var/lib/docker/devicemapper/devicemapper/data 不断增长，而且无法控制。很多人会希望删除镜像或者可以解决这个问题，结果发现效果并不明显。原因就是这个稀疏文件的空间释放后基本不进行垃圾回收的问题。因此往往会出现即使删除了文件内容，空间却无法回收，随着使用这个稀疏文件一直在不断增长。
+所以对于 CentOS/RHEL 的用户来说，在没有办法使用 UnionFS 的情况下，一定要配置 direct-lvm 给 devicemapper ，无论是为了性能、稳定性还是空间利用率。
+
+CentOS 7 中存在被 backports 回来的 overlay 驱动，不过CentOS 里的这个驱动达不到生产环境使用的稳定程度，所以不推荐使用。
+
+### 镜像的实现原理
+
+每个镜像都由很多层次构成，Docker 使用 Union FS 将这些不同的层结合到一个镜像中去。
+
+通常 Union FS 有两个用途, 一方面可以实现不借助 LVM、RAID 将多个 disk 挂到同一个目录下,另一个更常用的就是将一个只读的分支和一个可写的分支联合在一起，Live CD 正是基于此方法可以允许在镜像不变的基础上允许用户在其上进行一些写操作。 Docker 在 AUFS 上构建的容器也是利用了类似的原理
+
 
 
