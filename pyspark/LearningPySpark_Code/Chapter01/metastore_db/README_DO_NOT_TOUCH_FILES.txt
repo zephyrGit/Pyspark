@@ -1,9 +1,1 @@
-
-# *************************************************************************
-# ***              DO NOT TOUCH FILES IN THIS DIRECTORY!                ***
-# *** FILES IN THIS DIRECTORY AND SUBDIRECTORIES CONSTITUTE A DERBY     ***
-# *** DATABASE, WHICH INCLUDES THE DATA (USER AND SYSTEM) AND THE       ***
-# *** FILES NECESSARY FOR DATABASE RECOVERY.                            ***
-# *** EDITING, ADDING, OR DELETING ANY OF THESE FILES MAY CAUSE DATA    ***
-# *** CORRUPTION AND LEAVE THE DATABASE IN A NON-RECOVERABLE STATE.     ***
-# *************************************************************************
+<attachment contenteditable="false" data-atts="%5B%5D" data-aid=".atts-7a34fce9-32bc-4023-b4c2-578a4eaa5062"></attachment><p># ************************************************************************* # *** DO NOT TOUCH FILES IN THIS DIRECTORY! *** # *** FILES IN THIS DIRECTORY AND SUBDIRECTORIES CONSTITUTE A DERBY *** # *** DATABASE, WHICH INCLUDES THE DATA (USER AND SYSTEM) AND THE *** # *** FILES NECESSARY FOR DATABASE RECOVERY. *** # *** EDITING, ADDING, OR DELETING ANY OF THESE FILES MAY CAUSE DATA *** # *** CORRUPTION AND LEAVE THE DATABASE IN A NON-RECOVERABLE STATE. *** # *************************************************************************</p><p><br></p>
