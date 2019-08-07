@@ -1,6 +1,6 @@
 # Pyspark-Cluster
 
-## Docker 从入门到实战
+## <font>Docker 从入门到实战
 
 ## Pyspark
 pyspark是Spark的python API，提供了使用python编写并提交大数据处理作业的接口。在pyspark里大致分为5个主要的模块
@@ -38,7 +38,7 @@ pyspark是Spark的python API，提供了使用python编写并提交大数据处
   
   
 ### 5. pyspark.mllib这个模块也是做机器学习的
-	但是这个模块底层使用的RDD，RDD在性能上优化的余地较少，因此现在最新的机器学习算法都是用基于DataFrame的API来实现。但这个模块里面也有很多有用的机器学习算法。
+  但是这个模块底层使用的RDD，RDD在性能上优化的余地较少，因此现在最新的机器学习算法都是用基于DataFrame的API来实现。但这个模块里面也有很多有用的机器学习算法。
 
 
 1-7  ： SparkContext 是pyspark的编程入口，作业的提交，任务的分发
