@@ -5,7 +5,7 @@
 ## Pyspark
 pyspark是Spark的python API，提供了使用python编写并提交大数据处理作业的接口。在pyspark里大致分为5个主要的模块
 
-1. pyspark模块，这个模块四最基础的模块，里面实现了最基础的编写Spark作业的API。这个模块里面有以下内容：
+ 1. pyspark模块，这个模块四最基础的模块，里面实现了最基础的编写Spark作业的API。这个模块里面有以下内容：
   - Sparkcontext:它是编写Spark程序的主入口
   - RDD：分布式弹性数据集，是Spark内部中最重要的抽象
   - Broadcast：在各个任务task中重复使用的广播变量
