@@ -42,5 +42,5 @@
 
 
 1-7  ： SparkContext 是pyspark的编程入口，作业的提交，任务的分发  
-8-20 ： SparkSQL是Spark的四大组件之一，也是Spark数据处理中用的最多的组件。SparkSQL在SparkCore的基础上对外提供了SQL接口，可以让熟悉SQL的技术人员快速上手
-21-39： Spark机器学习及常用算法
+8-20 ： SparkSQL是Spark的四大组件之一，也是Spark数据处理中用的最 多的组件。SparkSQL在SparkCore的基础上对外提供了SQL接口，可以让熟悉SQL的技术人员快速上手  
+21-39： Spark机器学习及常用算法  
