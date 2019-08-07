@@ -16,7 +16,7 @@ pyspark是Spark的python API，提供了使用python编写并提交大数据处
   - TaskContext：实验性质的API，用于获取运行中任务的上下文信息。
 
    
-2. pyspark.sql模块，这个模块是架构在RDD之上的高级模块，提供了SQL的支持，包含以下内容：
+### 2. pyspark.sql模块，这个模块是架构在RDD之上的高级模块，提供了SQL的支持，包含以下内容：
  - SparkSession：SparkSQL的主入口，其内部仍然是调用SparkContext的
  - DataFrame：分布式的结构化的数据集，最终的计算仍然转换为RDD上的计算
  - Column：DataFrame中的列
@@ -28,12 +28,11 @@ pyspark是Spark的python API，提供了使用python编写并提交大数据处
  - types：可用的数据类型
  - Window:提供窗口函数的支持
     
-    
-    
-3. pyspark.streaming这个模块主要是用来处理流数据，从外部的消息中间件如kafka，flume或者直接从网络接收数据，来进行实时的流数据处理。其内部会将接收到的数据转换为DStream，DStream的内部实际上就是RDD。pyspark.streaming对流数据的支持还不是很完善，不如原生的Scala语言和Java语言。但是仍然会包括最主要的原理。
+      
+### 3. pyspark.streaming这个模块主要是用来处理流数据，从外部的消息中间件如kafka，flume或者直接从网络接收数据，来进行实时的流数据处理。其内部会将接收到的数据转换为DStream，DStream的内部实际上就是RDD。pyspark.streaming对流数据的支持还不是很完善，不如原生的Scala语言和Java语言。但是仍然会包括最主要的原理。
 
 
-4. pyspark.ml这个模块主要是做机器学习的，里面实现了很多机器学习算法，包括分类、回归、聚类、推荐。这个的内容我们会囊括最主要的机器学习算法。pyspark.ml这个模块现已经成为主要的机器学习模块，其内部实现是基于DataFrame数据框。
+### 4. pyspark.ml这个模块主要是做机器学习的，里面实现了很多机器学习算法，包括分类、回归、聚类、推荐。这个的内容我们会囊括最主要的机器学习算法。pyspark.ml这个模块现已经成为主要的机器学习模块，其内部实现是基于DataFrame数据框。
   
   
 5. pyspark.mllib这个模块也是做机器学习的，但是这个模块底层使用的RDD，RDD在性能上优化的余地较少，因此现在最新的机器学习算法都是用基于DataFrame的API来实现。但这个模块里面也有很多有用的机器学习算法。
